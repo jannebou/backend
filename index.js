@@ -11,20 +11,14 @@ let list = [
   {
     id: "1",
     item: "Porkkana",
-    amount: 1,
-    unit: "ps"
   },
   {
     id: "2",
     item: "Peruna",
-    amount: 1,
-    unit: "ps"
   },
   {
     id: "3",
     item: "Maito",
-    amount: 1,
-    unit: "l"
   }
 ]
 
@@ -65,7 +59,7 @@ app.delete('/api/list/:id', (request, response) => {
 app.post('/api/list', (request, response) => {
   const body = request.body
 
-  if (!body.item || !body.amount) {
+  if (!body.item) {
     return response.status(400).json({ 
       error: 'item or amount missing' 
     })
@@ -76,8 +70,6 @@ app.post('/api/list', (request, response) => {
   // edit its value instead adding new one
   if (list.map(list => list.item).includes(body.item)) {
     const item = list.find(list => list.item === body.item)
-    item.amount = body.amount
-    item.unit = body.unit
     response.json(item)
     return
   }
@@ -85,8 +77,6 @@ app.post('/api/list', (request, response) => {
   const newItem = {
     id: generateId(),
     item: body.item,
-    amount: body.amount,
-    unit: body.unit
   }
 
   list = list.concat(newItem)
