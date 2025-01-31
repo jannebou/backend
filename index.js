@@ -87,7 +87,7 @@ app.post('/api/mobiili', (request, response) => {
   }
 
 
-  let s = sql`INSERT INTO list (item) VALUES (${newItem.item})`.catch(error => {
+  let s = sql`INSERT INTO list VALUES (${newItem.item})`.catch(error => {
     console.log(error)
   })
   list2 = list2.concat(newItem)
