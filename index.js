@@ -1,9 +1,27 @@
+import postgres from 'postgres'
+
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const sql = postgres({
+  host: process.env.DATABASE_HOST,
+  database: process.env.DATABASE_NAME,
+  username: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  ssl: 'require',
+})
 
 app.use(cors())
 app.use(express.json())
+
+
+let list2 = [
+  {
+    id: "1",
+    item: "Testi",
+  }
+]
+
 
 
 // Kauppalista valmiilla esimerkki datalla
@@ -23,7 +41,11 @@ let list = [
 ]
 
 app.get('/', (request, response) => {
-  response.send('<h1>Kauppalistan Backend. Selainohjelmoinnin harjoitustyö.</h1>')
+  sql`CREATE TABLE IF NOT EXISTS list (id SERIAL PRIMARY KEY, item TEXT)`.catch(error => {
+    console.log(error)
+  })
+  response.send('<h1>Kauppalistan Backend.</h1>')
+
 })
 
 // Hae koko kauppalista
