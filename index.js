@@ -44,14 +44,16 @@ app.get('/', (request, response) => {
     console.log(error)
   })
   response.send('<h1>Kauppalistan Backend.</h1>')
-
 })
 
 // Hae koko kauppalista
 app.get('/api/list', (request, response) => {
+  console.log(
+    sql`SELECT * FROM list`
+  )
   response.json(list)
 })
-
+ 
 // Hae ostosta listasta
 app.get('/api/list/:id', (request, response) => {
   const id = request.params.id
@@ -99,7 +101,9 @@ app.post('/api/list', (request, response) => {
     id: generateId(),
     item: body.item,
   }
-
+  sql`INSERT INTO list (item) VALUES (${newItem.item})`.catch(error => {
+    console.log(error)
+  })
   list = list.concat(newItem)
   response.json(newItem)
 })
