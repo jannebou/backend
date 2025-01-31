@@ -1,5 +1,5 @@
 import postgres from 'postgres'
-
+const postgres = require('postgres');
 const express = require('express')
 const app = express()
 const cors = require('cors')
