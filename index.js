@@ -1,9 +1,22 @@
+import postgres from 'postgres'
+
 const express = require('express')
 const app = express()
 const cors = require('cors')
 
+const sql = postgres({
+  host: process.env.DATABASE_HOST,
+  database: process.env.DATABASE_NAME,
+  username: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  ssl: 'require',
+})
+
+
 app.use(cors())
 app.use(express.json())
+
+
 
 
 // Kauppalista valmiilla esimerkki datalla
@@ -22,6 +35,13 @@ let list = [
   }
 ]
 
+let list2 = [
+  {
+    id: "1",
+    item: "testi",
+  }
+]
+
 app.get('/', (request, response) => {
   response.send('<h1>Kauppalistan Backend. Selainohjelmoinnin harjoitustyö.</h1>')
 })
@@ -30,6 +50,37 @@ app.get('/', (request, response) => {
 app.get('/api/list', (request, response) => {
   response.json(list)
 })
+
+
+//---------------------------------------------------------
+// MOBIILI OHJELMOINTIA VARTEN
+app.get('/api/mobiili', (request, response) => {
+  sql`SELECT * FROM list`.then(result => response.json(result))
+  response.json(list2)
+})
+
+app.post('/api/mobiili', (request, response) => {
+  const body = request.body
+
+  if (!body.item) {
+    return response.status(400).json({ 
+      error: 'item or amount missing' 
+    })
+  }
+
+  const newItem = {
+    id: generateId(),
+    item: body.item,
+  }
+
+
+  list2 = list2.concat(newItem)
+  response.json(newItem)
+})
+//---------------------------------------------------------
+
+
+
 
 // Hae ostosta listasta
 app.get('/api/list/:id', (request, response) => {
