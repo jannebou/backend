@@ -49,11 +49,53 @@ app.get('/', (request, response) => {
 // Hae koko kauppalista
 app.get('/api/list', (request, response) => {
   console.log(
-    sql`SELECT * FROM list`
-  )
+    sql`SELECT * FROM list`)
   response.json(list)
 })
- 
+
+
+//------------------------------------------------------------
+// Hae lista mobiili harjoitustyötä varten
+app.get('/api/mobiili', (request, response) => {
+  response.json(sql`SELECT * FROM list`)
+  // response.json(list2)
+})
+
+
+// Lisää uusi ostos kauppalistaan
+app.post('/api/mobiili', (request, response) => {
+  const body = request.body
+
+  if (!body.item) {
+    return response.status(400).json({ 
+      error: 'item or amount missing' 
+    })
+  }
+
+
+  // if item is already in list
+  // edit its value instead adding new one
+  if (list2.map(list2 => list2.item).includes(body.item)) {
+    const item = list2.find(list2 => list2.item === body.item)
+    response.json(item)
+    return
+  }
+
+  const newItem = {
+    id: generateId(),
+    item: body.item,
+  }
+
+
+  let s = sql`INSERT INTO list (item) VALUES (${newItem.item})`.catch(error => {
+    console.log(error)
+  })
+  list2 = list2.concat(newItem)
+  response.json(s)
+})
+//------------------------------------------------------------
+
+
 // Hae ostosta listasta
 app.get('/api/list/:id', (request, response) => {
   const id = request.params.id
