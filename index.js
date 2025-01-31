@@ -48,8 +48,6 @@ app.get('/', (request, response) => {
 
 // Hae koko kauppalista
 app.get('/api/list', (request, response) => {
-  console.log(
-    sql`SELECT * FROM list`)
   response.json(list)
 })
 
@@ -57,7 +55,7 @@ app.get('/api/list', (request, response) => {
 //------------------------------------------------------------
 // Hae lista mobiili harjoitustyötä varten
 app.get('/api/mobiili', (request, response) => {
-  response.json(sql`SELECT * FROM list`)
+  response.json(sql`SELECT item FROM list`)
   // response.json(list2)
 })
 
