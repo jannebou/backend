@@ -54,10 +54,15 @@ app.get('/api/list', (request, response) => {
 
 //------------------------------------------------------------
 // Hae lista mobiili harjoitustyötä varten
-app.get('/api/mobiili', (request, response) => {
-  response.json(sql`SELECT item  FROM list`)
-  // response.json(list2)
-})
+app.get('/api/mobiili', async (request, response) => {
+  try {
+    const items = await sql`SELECT item FROM list`;
+    response.json(items);
+  } catch (error) {
+    console.log(error);
+    response.status(500).json({ error: 'Database error' });
+  }
+});
 
 
 // Lisää uusi ostos kauppalistaan
