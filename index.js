@@ -89,7 +89,8 @@ app.post('/api/mobiili', async (request, response) => {
   };
 
   try {
-    await sql`INSERT INTO list (id, item) VALUES (${newItem.id}, ${newItem.item})`;
+    await sql`INSERT INTO list (item) VALUES (${newItem.item})`;
+    // await sql`INSERT INTO list (id, item) VALUES (${newItem.id}, ${newItem.item})`;
     // list2 = list2.concat(newItem);
     response.json(newItem);
   } catch (error) {
@@ -164,5 +165,6 @@ const generateId = () => {
 
 const PORT = 3001
 app.listen(PORT, () => {
+  sql`CREATE TABLE IF NOT EXISTS list (id SERIAL PRIMARY KEY, item TEXT)`.catch(error => {})
   console.log(`Server running on port ${PORT}`)
 })
