@@ -1,26 +1,26 @@
-const postgres = require('postgres');
-const express = require('express')
-const app = express()
-const cors = require('cors')
+import express from 'express';
+import postgres from 'postgres';
+import cors from 'cors';
+
+const app = express();
+
 const sql = postgres({
   host: process.env.DATABASE_HOST,
   database: process.env.DATABASE_NAME,
   username: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASSWORD,
   ssl: 'require',
-})
+});
 
-app.use(cors())
-app.use(express.json())
-
+app.use(cors());
+app.use(express.json());
 
 let list2 = [
   {
     id: "1",
     item: "Testi",
   }
-]
-
+];
 
 
 // Kauppalista valmiilla esimerkki datalla
@@ -55,42 +55,43 @@ app.get('/api/list', (request, response) => {
 //------------------------------------------------------------
 // Hae lista mobiili harjoitustyötä varten
 app.get('/api/mobiili', (request, response) => {
-  response.json(sql`SELECT item FROM list`)
+  response.json(sql`SELECT item  FROM list`)
   // response.json(list2)
 })
 
 
 // Lisää uusi ostos kauppalistaan
-app.post('/api/mobiili', (request, response) => {
-  const body = request.body
-
+app.post('/api/mobiili', async (request, response) => {
+  const body = request.body;
+  console.log(body);
   if (!body.item) {
     return response.status(400).json({ 
       error: 'item or amount missing' 
-    })
+    });
   }
 
-
   // if item is already in list
-  // edit its value instead adding new one
+  // edit its value instead of adding a new one
   if (list2.map(list2 => list2.item).includes(body.item)) {
-    const item = list2.find(list2 => list2.item === body.item)
-    response.json(item)
-    return
+    const item = list2.find(list2 => list2.item === body.item);
+    response.json(item);
+    return;
   }
 
   const newItem = {
     id: generateId(),
     item: body.item,
+  };
+
+  try {
+    await sql`INSERT INTO list (id, item) VALUES (${newItem.id}, ${newItem.item})`;
+    list2 = list2.concat(newItem);
+    response.json(newItem);
+  } catch (error) {
+    console.log(error);
+    response.status(500).json({ error: 'Database error' });
   }
-
-
-  let s = sql`INSERT INTO list VALUES (${newItem.item})`.catch(error => {
-    console.log(error)
-  })
-  list2 = list2.concat(newItem)
-  response.json(s)
-})
+});
 //------------------------------------------------------------
 
 
