@@ -165,6 +165,6 @@ const generateId = () => {
 const PORT = 3001
 app.listen(PORT, () => {
   sql`DELETE FROM list`.catch(error => {})
-  sql`CREATE TABLE IF NOT EXISTS list (id SERIAL PRIMARY KEY, item TEXT)`.catch(error => {})
+  sql`CREATE TABLE IF NOT EXISTS list (id SERIAL PRIMARY KEY, item TEXT NOT NULL)`.catch(error => {})
   console.log(`Server running on port ${PORT}`)
 })
