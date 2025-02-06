@@ -56,7 +56,7 @@ app.get('/api/list', (request, response) => {
 // Hae lista mobiili harjoitustyötä varten
 app.get('/api/mobiili', async (request, response) => {
   try {
-    const items = await sql`SELECT item FROM list`;
+    const items = await sql`SELECT * FROM list`;
     response.json(items);
   } catch (error) {
     console.log(error);
@@ -75,13 +75,13 @@ app.post('/api/mobiili', async (request, response) => {
     });
   }
 
-  // if item is already in list
-  // edit its value instead of adding a new one
-  if (list2.map(list2 => list2.item).includes(body.item)) {
-    const item = list2.find(list2 => list2.item === body.item);
-    response.json(item);
-    return;
-  }
+  // // if item is already in list
+  // // edit its value instead of adding a new one
+  // if (list2.map(list2 => list2.item).includes(body.item)) {
+  //   const item = list2.find(list2 => list2.item === body.item);
+  //   response.json(item);
+  //   return;
+  // }
 
   const newItem = {
     id: generateId(),
@@ -90,7 +90,7 @@ app.post('/api/mobiili', async (request, response) => {
 
   try {
     await sql`INSERT INTO list (id, item) VALUES (${newItem.id}, ${newItem.item})`;
-    list2 = list2.concat(newItem);
+    // list2 = list2.concat(newItem);
     response.json(newItem);
   } catch (error) {
     console.log(error);
