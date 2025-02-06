@@ -55,10 +55,17 @@ app.get('/api/list', (request, response) => {
 //------------------------------------------------------------
 // Poista ostos mobiili harjoitustyötä varten
 app.delete('/api/mobiili/:id', async (request, response) => {
-  const id = request.params.id
-  await sql`DELETE FROM list WHERE id = (${id})`;
+  const { id } = request.params;
 
-})
+  try {
+    await sql`DELETE FROM list WHERE id = ${id}`;
+    response.status(204).send(); // 204 No Content for successful deletion
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ error: 'Database error' });
+  }
+});
+
 
 // Hae lista mobiili harjoitustyötä varten
 app.get('/api/mobiili', async (request, response) => {
