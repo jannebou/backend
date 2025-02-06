@@ -54,6 +54,16 @@ app.get('/api/list', (request, response) => {
 
 //------------------------------------------------------------
 // Poista ostos mobiili harjoitustyötä varten
+app.delete('/api/mobiili', async (request, response) => {
+  try {
+    await sql`DELETE FROM list`;
+    response.status(204).send(); // 204 No Content for successful deletion
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ error: 'Database error' });
+  }
+});
+
 app.delete('/api/mobiili/:id', async (request, response) => {
   const { id } = request.params;
 
@@ -164,7 +174,6 @@ const generateId = () => {
 
 const PORT = 3001
 app.listen(PORT, async () => {
-  await sql`DELETE FROM list`.catch(error => {})
   await sql`CREATE TABLE IF NOT EXISTS list (id SERIAL PRIMARY KEY, item TEXT NOT NULL)`.catch(error => {})
   console.log(`Server running on port ${PORT}`)
 })
