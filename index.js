@@ -67,12 +67,6 @@ app.delete('/api/mobiili/:id', async (request, response) => {
   try {
     // await sql`DELETE FROM list WHERE item = ${id}`;
     await sql`DELETE FROM list WHERE id = ${id}`;
-    // reorder items by id
-    const items = await sql`SELECT * FROM list`;
-    for (let i = 0; i < items.length; i++) {
-      await sql`UPDATE list SET id = ${i + 1} WHERE item = ${items[i].item}`;
-    }
-    
     response.status(204).send(); // 204 No Content for successful deletion
   } catch (error) {
     console.error(error);
@@ -96,7 +90,7 @@ app.get('/api/mobiili', async (request, response) => {
 // Lisää uusi ostos kauppalistaan
 app.post('/api/mobiili', async (request, response) => {
   const body = request.body;
-  console.log(body);
+
   if (!body.item) {
     return response.status(400).json({ 
       error: 'item missing' 
@@ -104,17 +98,19 @@ app.post('/api/mobiili', async (request, response) => {
   }
 
   try {
-    // if db is clear reset primary key
+    // if db is clear reset primary key back to 1
     const maxId = await sql`SELECT MAX(id) FROM list`;
     if (maxId[0].max === null) {
       await sql`ALTER SEQUENCE list_id_seq RESTART WITH 1`;
     }
 
+    // if item is existing, don't add a new one
     const existingItem = await sql`SELECT item FROM list WHERE item = ${body.item}`;
     if (existingItem.length > 0) {
       return response.status(409).json({ error: 'item already exists' });
     }
 
+    // finally insert into db
     await sql`INSERT INTO list (item) VALUES (${body.item})`;
     response.json({ item: body.item });
   } catch (error) {
