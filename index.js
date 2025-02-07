@@ -97,6 +97,12 @@ app.post('/api/mobiili', async (request, response) => {
   }
 
   try {
+    // if db is clear reset primary key
+    const maxId = await sql`SELECT MAX(id) FROM list`;
+    if (maxId[0].max === null) {
+      await sql`ALTER SEQUENCE list_id_seq RESTART WITH 1`;
+    }
+    
     await sql`INSERT INTO list (item) VALUES (${body.item})`;
     response.json(newItem);
   } catch (error) {
