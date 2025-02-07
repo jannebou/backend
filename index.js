@@ -40,9 +40,6 @@ let list = [
 ]
 
 app.get('/', (request, response) => {
-  sql`CREATE TABLE IF NOT EXISTS list (id SERIAL PRIMARY KEY, item TEXT)`.catch(error => {
-    console.log(error)
-  })
   response.send('<h1>Kauppalistan Backend.</h1>')
 })
 
@@ -51,7 +48,7 @@ app.get('/api/list', (request, response) => {
   response.json(list)
 })
 
-
+//  MOBIILI HARJOITUSTYÖN API
 //------------------------------------------------------------
 // Tyhjää koko lista
 app.delete('/api/mobiili/clear', async (request, response) => {
@@ -68,7 +65,7 @@ app.delete('/api/mobiili/:id', async (request, response) => {
   const { id } = request.params;
 
   try {
-    await sql`DELETE FROM list WHERE name = ${id}`;
+    await sql`DELETE FROM list WHERE item = ${id}`;
     response.status(204).send(); // 204 No Content for successful deletion
   } catch (error) {
     console.error(error);
