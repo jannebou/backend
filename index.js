@@ -53,8 +53,8 @@ app.get('/api/list', (request, response) => {
 
 
 //------------------------------------------------------------
-// Poista ostos mobiili harjoitustyötä varten
-app.delete('/api/mobiili', async (request, response) => {
+// Tyhjää koko lista
+app.delete('/api/mobiili/clear', async (request, response) => {
   try {
     await sql`DELETE FROM list`;
     response.status(204).send(); // 204 No Content for successful deletion
@@ -68,7 +68,7 @@ app.delete('/api/mobiili/:id', async (request, response) => {
   const { id } = request.params;
 
   try {
-    await sql`DELETE FROM list WHERE id = ${id}`;
+    await sql`DELETE FROM list WHERE name = ${id}`;
     response.status(204).send(); // 204 No Content for successful deletion
   } catch (error) {
     console.error(error);
