@@ -99,7 +99,7 @@ app.post('/api/mobiili', async (request, response) => {
   console.log(body);
   if (!body.item) {
     return response.status(400).json({ 
-      error: 'item or amount missing' 
+      error: 'item missing' 
     });
   }
 
@@ -109,16 +109,9 @@ app.post('/api/mobiili', async (request, response) => {
     if (maxId[0].max === null) {
       await sql`ALTER SEQUENCE list_id_seq RESTART WITH 1`;
     }
-    
-    // if item is already in list dont insert it
-    const item = await sql`SELECT * FROM list WHERE item = ${body.item}`;
-    if (item !== null && item.length > 0) {
-      response.status(500).json({ error: 'item is already adde' });
-      return;
-    }
 
-    await sql`INSERT INTO list (item) VALUES (${body.item})`;
-    response.json(newItem);
+    await sql`INSERT INTO list (item) VALUES (${body.item}) ON CONFLICT DO NOTHING`;
+    response.json({ item: body.item });
   } catch (error) {
     console.log(error);
     response.status(500).json({ error: 'Database error' });
