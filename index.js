@@ -110,7 +110,12 @@ app.post('/api/mobiili', async (request, response) => {
       await sql`ALTER SEQUENCE list_id_seq RESTART WITH 1`;
     }
 
-    await sql`INSERT INTO list (item) VALUES (${body.item}) ON CONFLICT DO NOTHING`;
+    const existingItem = await sql`SELECT item FROM list WHERE item = ${body.item}`;
+    if (existingItem.length > 0) {
+      return response.status(409).json({ error: 'item already exists' });
+    }
+
+    await sql`INSERT INTO list (item) VALUES (${body.item})`;
     response.json({ item: body.item });
   } catch (error) {
     console.log(error);
