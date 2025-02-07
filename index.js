@@ -65,7 +65,14 @@ app.delete('/api/mobiili/:id', async (request, response) => {
   const { id } = request.params;
 
   try {
-    await sql`DELETE FROM list WHERE item = ${id}`;
+    // await sql`DELETE FROM list WHERE item = ${id}`;
+    await sql`DELETE FROM list WHERE id = ${id}`;
+    // reorder items by id
+    const items = await sql`SELECT * FROM list`;
+    for (let i = 0; i < items.length; i++) {
+      await sql`UPDATE list SET id = ${i + 1} WHERE item = ${items[i].item}`;
+    }
+    
     response.status(204).send(); // 204 No Content for successful deletion
   } catch (error) {
     console.error(error);
@@ -102,7 +109,7 @@ app.post('/api/mobiili', async (request, response) => {
     if (maxId[0].max === null) {
       await sql`ALTER SEQUENCE list_id_seq RESTART WITH 1`;
     }
-    
+
     await sql`INSERT INTO list (item) VALUES (${body.item})`;
     response.json(newItem);
   } catch (error) {
