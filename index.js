@@ -113,7 +113,7 @@ app.post('/api/mobiili', async (request, response) => {
     // if item is already in list dont insert it
     const item = await sql`SELECT * FROM list WHERE item = ${body.item}`;
     if (item !== null && item.length > 0) {
-      response.status(200);
+      response.status(500).json({ error: 'item is already adde' });
       return;
     }
 
