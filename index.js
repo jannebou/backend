@@ -157,9 +157,9 @@ app.post('/api/list', (request, response) => {
     id: generateId(),
     item: body.item,
   }
-  sql`INSERT INTO list (item) VALUES (${newItem.item})`.catch(error => {
-    console.log(error)
-  })
+  // sql`INSERT INTO list (item) VALUES (${newItem.item})`.catch(error => {
+  //   console.log(error)
+  // })
   list = list.concat(newItem)
   response.json(newItem)
 })
