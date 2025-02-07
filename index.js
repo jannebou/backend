@@ -63,9 +63,10 @@ app.delete('/api/mobiili/clear', async (request, response) => {
 
 app.delete('/api/mobiili/:id', async (request, response) => {
   const { id } = request.params;
+  // const { item } = request.body;
 
   try {
-    // await sql`DELETE FROM list WHERE item = ${id}`;
+    // await sql`DELETE FROM list WHERE item = ${item}`;
     await sql`DELETE FROM list WHERE id = ${id}`;
     response.status(204).send(); // 204 No Content for successful deletion
   } catch (error) {
